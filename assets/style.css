@@ -113,7 +113,6 @@ button, input { font: inherit; }
 .box-editorias li:last-child a { border-bottom: 0; }
 .box-editorias li a:hover { color: var(--azul-texto); }
 
-@supports (position: sticky) { .box-prazos { position: sticky; top: 16px; } }
 
 /* ---------- listas */
 .faixa-titulo { background: var(--cinza-fundo); border-bottom: 1px solid var(--linha); padding: 26px 0 22px; }
@@ -277,4 +276,19 @@ button, input { font: inherit; }
   .da-semana .grade { grid-template-columns: 1fr 1fr; gap: 18px 14px; }
   .da-semana .card__titulo { font-size: 16px; }
   .da-semana .capa--tipo span { font-size: 15px; }
+}
+
+/* assinatura da marca: "por Dimorvana Castro" em Garamond */
+.marca { align-items: baseline; }
+.marca__sinal { align-self: center; }
+.marca__por { font: 400 17px/1 "EB Garamond", "Adobe Garamond Pro", Garamond, Georgia, serif; letter-spacing: .01em; color: rgba(255,255,255,.88); margin-left: 2px; white-space: nowrap; }
+.rodape__marca { align-items: baseline; }
+.rodape__marca .marca__sinal { align-self: center; }
+.rodape__marca .marca__por { font-size: 16px; }
+@media (max-width: 760px) {
+  .barra__in { height: 60px; }
+  .marca { display: grid; grid-template-columns: auto auto; column-gap: 8px; row-gap: 1px; align-items: center; }
+  .marca__sinal { grid-row: 1 / span 2; height: 30px; }
+  .marca__nome { font-size: 22px; }
+  .marca__por { grid-column: 2; font-size: 13px; margin: 0; }
 }

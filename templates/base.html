@@ -22,7 +22,7 @@
 <link rel="preload" href="/assets/fonts/Archivo-Bold.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
 <meta name="theme-color" content="#0a4aa6">
 <link rel="stylesheet" href="/assets/style.css?v={{ versao }}">
 {% block jsonld %}
@@ -46,7 +46,7 @@
         <span class="hamburguer" aria-hidden="true"><i></i><i></i><i></i></span><span class="barra__menu-txt">Menu</span>
       </button>
       <a class="marca" href="/" aria-label="{{ site.nome }}, página inicial">
-        <span class="marca__sinal" aria-hidden="true"></span><span class="marca__nome">{{ site.nome }}</span>
+        <span class="marca__sinal" aria-hidden="true"></span><span class="marca__nome">{{ site.nome }}</span><span class="marca__por">por {{ site.responsavel }}</span>
       </a>
       <form class="barra__busca" role="search" action="/busca/" method="get">
         <label for="busca-topo" class="so-leitor">Buscar no {{ site.nome }}</label>
@@ -72,7 +72,7 @@
 <footer class="rodape">
   <div class="envoltorio rodape__in">
     <div>
-      <p class="rodape__marca"><span class="marca__sinal" aria-hidden="true"></span>{{ site.nome }}</p>
+      <p class="rodape__marca"><span class="marca__sinal" aria-hidden="true"></span>{{ site.nome }}<span class="marca__por">por {{ site.responsavel }}</span></p>
       <p class="rodape__texto">{{ site.descricao }}</p>
       <p class="rodape__texto">Editado por {{ site.responsavel }}, {{ site.responsavel_cargo }}. Contato: <a href="mailto:{{ site.email }}">{{ site.email }}</a></p>
     </div>
