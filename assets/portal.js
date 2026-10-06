@@ -26,8 +26,35 @@
 
 /* hero com destaques (estilo Só uma artezinha) */
 (function () {
+  function embaralhar(lista) {
+    for (var i = lista.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = lista[i]; lista[i] = lista[j]; lista[j] = t; }
+    return lista;
+  }
+  /* "Da semana": sorteia 4 cartões a cada visita */
+  document.querySelectorAll("[data-sortear]").forEach(function (g) {
+    var n = Number(g.dataset.sortear), cards = embaralhar([].slice.call(g.children));
+    cards.forEach(function (c, i) { g.appendChild(c); c.hidden = i >= n; });
+  });
   var hero = document.querySelector(".hero");
   if (!hero) return;
+  /* destaques: ordem sorteada a cada visita (a manchete marcada fica em 1º), 5 no máximo */
+  (function () {
+    var todos = [].slice.call(hero.querySelectorAll(".hero__slide"));
+    var fixo = todos[0].classList.contains("fixo") ? [todos[0]] : [];
+    var resto = embaralhar(todos.filter(function (s) { return fixo.indexOf(s) < 0; }));
+    var ordem = fixo.concat(resto), ref = hero.querySelector(".hero__controles");
+    todos[0].classList.remove("ativo"); todos[0].setAttribute("aria-hidden", "true");
+    ordem.forEach(function (s, i) {
+      if (i >= 5) { s.remove(); return; }
+      hero.insertBefore(s, ref);
+      s.setAttribute("aria-label", (i + 1) + " de " + Math.min(5, ordem.length));
+      s.querySelectorAll("a").forEach(function (a) { a.tabIndex = -1; });
+    });
+    var primeiro = ordem[0];
+    primeiro.classList.add("ativo"); primeiro.removeAttribute("aria-hidden");
+    primeiro.querySelectorAll("a").forEach(function (a) { a.removeAttribute("tabindex"); });
+    var img = primeiro.querySelector("img[loading]"); if (img) img.loading = "eager";
+  })();
   var slides = hero.querySelectorAll(".hero__slide");
   if (slides.length < 2) return;
   var pontos = hero.querySelectorAll(".hero__pontos button");

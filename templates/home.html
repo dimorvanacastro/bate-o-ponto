@@ -11,7 +11,7 @@
 
 <section class="hero" aria-roledescription="carrossel" aria-label="Destaques">
   {% for m in destaques %}
-  <article class="hero__slide{% if loop.first %} ativo{% endif %}" aria-roledescription="slide" aria-label="{{ loop.index }} de {{ destaques|length }}"{% if not loop.first %} aria-hidden="true"{% endif %}>
+  <article class="hero__slide{% if loop.first %} ativo{% endif %}{% if loop.first and m.manchete %} fixo{% endif %}" aria-roledescription="slide" {% if not loop.first %} aria-hidden="true"{% endif %}>
     <div class="hero__fundo" aria-hidden="true">
       {% if m.imagem %}<img src="{{ m.imagem }}" alt="" width="1200" height="675"{% if not loop.first %} loading="lazy"{% endif %}>
       {% else %}<div class="hero__tipo capa--t{{ m.tom }}"><span>{{ m.tema }}</span></div>{% endif %}
@@ -27,9 +27,9 @@
   {% if destaques|length > 1 %}
   <div class="envoltorio hero__controles">
     <div class="hero__pontos" role="tablist" aria-label="Escolher destaque">
-      {% for m in destaques %}<button type="button" role="tab" aria-label="Destaque {{ loop.index }}"{% if loop.first %} aria-selected="true"{% endif %}><span></span></button>{% endfor %}
+      {% for m in destaques[:5] %}<button type="button" role="tab" aria-label="Destaque {{ loop.index }}"{% if loop.first %} aria-selected="true"{% endif %}><span></span></button>{% endfor %}
     </div>
-    <span class="hero__contador" aria-hidden="true"><b>01</b> / {{ '%02d' % destaques|length }}</span>
+    <span class="hero__contador" aria-hidden="true"><b>01</b> / {{ '%02d' % (destaques[:5]|length) }}</span>
     <div class="hero__botoes">
       <button type="button" class="hero__btn hero__pausa" aria-label="Pausar destaques">❚❚</button>
       <button type="button" class="hero__btn" data-dir="-1" aria-label="Destaque anterior">‹</button>
@@ -42,7 +42,7 @@
 {% if semana %}
 <section class="envoltorio da-semana" aria-labelledby="semana-titulo">
   <h2 id="semana-titulo" class="secao__titulo">Da semana</h2>
-  <div class="grade">
+  <div class="grade" data-sortear="4">
     {% for m in semana %}{{ card(m) }}{% endfor %}
   </div>
 </section>

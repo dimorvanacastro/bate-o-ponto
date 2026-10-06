@@ -172,6 +172,103 @@ def gerar_og(destino: Path, tema: str, titulo: str, nome_site: str, t: int) -> N
     img.save(destino, "PNG", optimize=True)
 
 
+# ---------------------------------------------------------------- stories 1080x1920
+def _quebrar(d, texto, fonte, largura):
+    linhas, atual = [], ""
+    for p in texto.split():
+        teste = (atual + " " + p).strip()
+        if d.textlength(teste, font=fonte) <= largura:
+            atual = teste
+        else:
+            if atual:
+                linhas.append(atual)
+            atual = p
+    if atual:
+        linhas.append(atual)
+    return linhas
+
+
+def gerar_story(destino: Path, m: dict, cfg: dict) -> None:
+    """Story vertical para Instagram: marca no topo, capa, editoria, título e área livre para o adesivo de link."""
+    try:
+        from PIL import Image, ImageDraw, ImageFont, ImageOps
+    except ImportError:
+        return
+    W, H, X = 1080, 1920, 72
+    azul, azul_esc = (10, 74, 166), (6, 42, 94)
+    img = Image.new("RGB", (W, H), azul_esc)
+    d = ImageDraw.Draw(img)
+    # leve degradê vertical
+    for y in range(H):
+        t = y / H
+        cor = tuple(int(azul[i] * (1 - t) + azul_esc[i] * t) for i in range(3))
+        d.line([(0, y), (W, y)], fill=cor)
+    fb = str(RAIZ / "assets/fonts/Archivo-Bold.ttf")
+    fm = str(RAIZ / "assets/fonts/Archivo-Medium.ttf")
+    F = lambda f, n: ImageFont.truetype(f, n)
+    # marca
+    d.rectangle([X, 150, X + 16, 210], fill=(255, 255, 255))
+    d.text((X + 40, 146), cfg["nome"], font=F(fb, 64), fill=(255, 255, 255))
+    d.text((X, 250), cfg["tagline"].upper(), font=F(fm, 26), fill=(169, 203, 255))
+    # capa (16:10)
+    cx0, cy0, cw, ch = X, 330, W - 2 * X, int((W - 2 * X) * 10 / 16)
+    foto = None
+    if m.get("imagem") and str(m["imagem"]).startswith("/"):
+        arq = RAIZ / str(m["imagem"]).lstrip("/")
+        if arq.exists():
+            try:
+                foto = ImageOps.fit(Image.open(arq).convert("RGB"), (cw, ch))
+            except Exception:
+                foto = None
+    if foto:
+        img.paste(foto, (cx0, cy0))
+        if m.get("credito"):
+            fc = F(fm, 22)
+            txt = str(m["credito"]).upper()
+            tw = d.textlength(txt, font=fc)
+            d.rectangle([cx0 + cw - tw - 32, cy0 + ch - 44, cx0 + cw, cy0 + ch], fill=(6, 42, 94))
+            d.text((cx0 + cw - tw - 16, cy0 + ch - 37), txt, font=fc, fill=(220, 232, 250))
+    else:
+        caixa = Image.new("RGB", (cw, ch))
+        cd = ImageDraw.Draw(caixa)
+        tons = [((15, 58, 120), (47, 127, 224)), ((8, 58, 130), (31, 104, 201)), ((13, 91, 196), (87, 160, 240))][m["tom"]]
+        for x in range(cw):
+            t = x / cw
+            cd.line([(x, 0), (x, ch)], fill=tuple(int(tons[0][i] * (1 - t) + tons[1][i] * t) for i in range(3)))
+        cd.ellipse([cw * 0.55, -ch * 0.45, cw * 1.25, ch * 0.75], fill=None, outline=(255, 255, 255), width=2)
+        tam = 150
+        ft = F(fb, tam)
+        while cd.textlength(m["tema"], font=ft) > cw - 96 and tam > 60:
+            tam -= 8
+            ft = F(fb, tam)
+        cd.text((48, ch - 48 - tam), m["tema"], font=ft, fill=(255, 255, 255))
+        img.paste(caixa, (cx0, cy0))
+    # editoria
+    y = cy0 + ch + 64
+    rot = m["editoria"]["nome"].upper() + ("  ·  PRAZO" if m["prazo"] else "")
+    d.text((X, y), rot, font=F(fb, 30), fill=(169, 203, 255))
+    # título
+    y += 64
+    tam = 76
+    while True:
+        ft = F(fb, tam)
+        linhas = _quebrar(d, m["titulo"], ft, W - 2 * X)
+        if len(linhas) <= 5 or tam <= 52:
+            break
+        tam -= 4
+    for ln in linhas[:6]:
+        d.text((X, y), ln, font=ft, fill=(255, 255, 255))
+        y += int(tam * 1.16)
+    # rodapé (a área entre o título e o rodapé fica livre para o adesivo de link)
+    d.line([(X, H - 190), (W - X, H - 190)], fill=(120, 160, 220), width=2)
+    fr = F(fm, 26)
+    d.text((X, H - 160), ("Por " + cfg["responsavel"]).upper(), font=fr, fill=(200, 218, 245))
+    dominio = cfg["url"].split("//", 1)[-1].upper()
+    d.text((W - X - d.textlength(dominio, font=fr), H - 160), dominio, font=fr, fill=(200, 218, 245))
+    destino.parent.mkdir(parents=True, exist_ok=True)
+    img.save(destino, "JPEG", quality=88, optimize=True, progressive=True)
+
+
 # ---------------------------------------------------------------- carga
 def carregar_materias(cfg: dict, incluir_exemplos: bool) -> list[dict]:
     pastas = [RAIZ / "materias"] + ([RAIZ / "exemplos"] if incluir_exemplos else [])
@@ -278,6 +375,12 @@ def main() -> None:
             gerar_og(SAIDA / "og" / f"{m['slug']}.png", m["tema"], m["titulo"], cfg["nome"], m["tom"])
     gerar_og(SAIDA / "og" / "site.png", "Departamento Pessoal", cfg["tagline"], cfg["nome"], 0)
 
+    # stories 1080x1920 das matérias dos últimos 30 dias (em /stories/<slug>.jpg)
+    for m in materias:
+        if agora - m["data"] <= dt.timedelta(days=30):
+            gerar_story(SAIDA / "stories" / f"{m['slug']}.jpg", m, cfg)
+            m["story"] = f"/stories/{m['slug']}.jpg"
+
     env = Environment(loader=FileSystemLoader(RAIZ / "templates"),
                       autoescape=select_autoescape(["html"]), trim_blocks=True, lstrip_blocks=True)
     env.filters.update(slugify=slugify, data_longa=data_longa, data_curta=data_curta, hora=hora,
@@ -293,11 +396,14 @@ def main() -> None:
 
     # home: hero inteiro com 5 destaques + "Da semana" + feed de últimas com lateral de prazos
     manchete = next((m for m in materias if m["manchete"]), materias[0] if materias else None)
-    destaques = ([manchete] + [m for m in materias if m is not manchete][:4]) if manchete else []
+    # o hero mostra 5 por visita, sorteados (no navegador) entre os 8 mais recentes; a manchete marcada fica sempre em 1º
+    destaques = ([manchete] + [m for m in materias if m is not manchete][:7]) if manchete else []
     def fora(m, *grupos):
         return not any(m is x for g in grupos for x in g)
-    semana = [m for m in materias if fora(m, destaques) and agora - m["data"] <= dt.timedelta(days=7)][:4]
-    ultimas = [m for m in materias if fora(m, destaques, semana)][:15]
+    semana = [m for m in materias if fora(m, destaques[:5]) and agora - m["data"] <= dt.timedelta(days=10)][:12]
+    if len(semana) < 4:
+        semana = [m for m in materias if fora(m, destaques[:5])][:8]
+    ultimas = [m for m in materias if fora(m, destaques[:5])][:15]
     prazos = [m for m in materias if m["prazo"]][:6]
     render("home.html", "/", destaques=destaques, semana=semana, ultimas=ultimas, prazos=prazos)
 
