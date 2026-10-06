@@ -23,6 +23,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap">
+<meta name="theme-color" content="#06122a">
 <link rel="stylesheet" href="/assets/style.css?v={{ versao }}">
 {% block jsonld %}
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":{{ site.nome|tojson }},"url":"{{ site.url }}/","inLanguage":"pt-BR","potentialAction":{"@type":"SearchAction","target":"{{ site.url }}/busca/?q={q}","query-input":"required name=q"}}</script>
@@ -35,35 +36,26 @@
 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client={{ site.adsense_id }}" crossorigin="anonymous"></script>
 {% endif %}
 </head>
-<body>
+<body class="{% block corpo_classe %}{% endblock %}">
 <a class="pular" href="#conteudo">Pular para o conteúdo</a>
-{% if exemplos %}<div class="aviso-exemplo">Prévia com matérias de EXEMPLO. Os textos e números abaixo não são notícias reais.</div>{% endif %}
+{% if exemplos %}<div class="aviso-exemplo">Prévia com matérias de EXEMPLO. Os textos e números não são notícias reais.</div>{% endif %}
 <header class="topo">
-  <div class="faixa">
-    <div class="envoltorio faixa__in">
-      <span id="hoje" class="faixa__data"></span>
-      <span>Por {{ site.responsavel }}, {{ site.responsavel_cargo }}</span>
-    </div>
-  </div>
-  <div class="envoltorio cabecalho">
+  <div class="envoltorio topo__in">
     <a class="marca" href="/" aria-label="{{ site.nome }}, página inicial">
       <span class="marca__sinal" aria-hidden="true"></span>
       <span class="marca__nome">{{ site.nome }}</span>
     </a>
-    <p class="cabecalho__tagline">{{ site.tagline }}</p>
-    <a class="cabecalho__busca" href="/busca/" aria-label="Buscar">
-      <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-      <span>Buscar</span>
-    </a>
-  </div>
-  <nav class="menu" aria-label="Editorias">
-    <div class="envoltorio menu__in">
+    <nav class="menu" aria-label="Editorias">
+      <a href="/"{% if url_atual == '/' %} aria-current="page"{% endif %}>Início</a>
       {% for e in site.editorias %}
       <a href="/editoria/{{ e.slug }}/"{% if editoria_atual == e.slug %} aria-current="page"{% endif %}>{{ e.nome }}</a>
       {% endfor %}
-      <a class="menu__prazo" href="/prazos/"{% if editoria_atual == 'prazos' %} aria-current="page"{% endif %}>Prazos</a>
-    </div>
-  </nav>
+      <a href="/prazos/"{% if editoria_atual == 'prazos' %} aria-current="page"{% endif %}>Prazos</a>
+    </nav>
+    <a class="topo__busca" href="/busca/" aria-label="Buscar">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M15.5 15.5 21 21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </a>
+  </div>
 </header>
 
 <main id="conteudo">
@@ -86,9 +78,7 @@
   </div>
   <div class="envoltorio rodape__legal">{{ site.aviso_legal }} © {{ ano }} {{ site.nome }}.</div>
 </footer>
-<script>
-(function(){var d=new Date(),m=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"],s=["domingo","segunda-feira","terça-feira","quarta-feira","quinta-feira","sexta-feira","sábado"];var el=document.getElementById("hoje");if(el)el.textContent=s[d.getDay()]+", "+(d.getDate()===1?"1º":d.getDate())+" de "+m[d.getMonth()]+" de "+d.getFullYear();})();
-</script>
+<script src="/assets/vitrine.js?v={{ versao }}" defer></script>
 {% block scripts %}{% endblock %}
 </body>
 </html>

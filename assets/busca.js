@@ -34,9 +34,10 @@
       : "Nada encontrado para “" + q + "”. Tente outra palavra.";
     saida.innerHTML = achados.slice(0, 40).map(function (a) {
       var m = a[1];
-      return '<article class="card"><p class="rotulo"><span>' + esc(m.e) + '</span></p>' +
-        '<h3 class="card__titulo"><a href="' + esc(m.u) + '">' + esc(m.t) + '</a></h3>' +
-        '<p class="card__resumo">' + esc(m.r) + '</p><p class="meta">' + esc(m.d) + '</p></article>';
+      return '<article class="card"><a class="card__link" href="' + esc(m.u) + '">' +
+        '<span class="card__ed">' + esc(m.e) + '</span>' +
+        '<h3 class="card__titulo">' + esc(m.t) + '</h3>' +
+        '<p class="card__resumo">' + esc(m.r) + '</p><span class="card__data">' + esc(m.d) + '</span></a></article>';
     }).join("");
   }
 

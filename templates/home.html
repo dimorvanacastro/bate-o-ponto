@@ -1,62 +1,48 @@
 {% extends "base.html" %}
-{% from "_card.html" import card, capa, rotulo %}
+{% from "_card.html" import card, capa, fileira %}
+{% block corpo_classe %}pagina-home{% endblock %}
 {% block conteudo %}
-{% if not manchete %}
+{% if not destaques %}
 <section class="envoltorio vazio">
   <h1>Em breve</h1>
   <p>As primeiras notícias do {{ site.nome }} saem nos próximos dias.</p>
 </section>
 {% else %}
 <h1 class="so-leitor">{{ site.nome }}: {{ site.tagline }}</h1>
-<section class="envoltorio destaque" aria-label="Manchete">
-  <article class="manchete">
-    <div class="manchete__texto">
-      {{ rotulo(manchete) }}
-      <h2 class="manchete__titulo"><a href="{{ manchete.url }}">{{ manchete.titulo }}</a></h2>
-      <p class="manchete__resumo">{{ manchete.resumo }}</p>
-      <p class="meta"><time datetime="{{ manchete.data|iso }}">{{ manchete.data|data_longa }}</time> · {{ manchete.leitura }} min de leitura</p>
+<section class="hero" aria-roledescription="carrossel" aria-label="Destaques">
+  {% for m in destaques %}
+  <article class="hero__slide{% if loop.first %} ativo{% endif %}" aria-roledescription="slide" aria-label="{{ loop.index }} de {{ destaques|length }}"{% if not loop.first %} aria-hidden="true"{% endif %}>
+    <div class="hero__fundo">
+      {% if m.imagem %}<img src="{{ m.imagem }}" alt="" width="1200" height="675"{% if not loop.first %} loading="lazy"{% endif %}>
+      {% else %}<div class="hero__tipo capa--t{{ m.tom }}"><span>{{ m.tema }}</span></div>{% endif %}
     </div>
-    <a class="manchete__capa" href="{{ manchete.url }}" tabindex="-1" aria-hidden="true">{{ capa(manchete, 'capa--grande') }}</a>
+    <div class="hero__conteudo envoltorio">
+      <p class="hero__rotulo">{{ m.editoria.nome }}{% if m.prazo %} <span class="selo selo--inline">Prazo</span>{% endif %}</p>
+      <h2 class="hero__titulo"><a href="{{ m.url }}"{% if not loop.first %} tabindex="-1"{% endif %}>{{ m.titulo }}</a></h2>
+      <p class="hero__resumo">{{ m.resumo }}</p>
+      <div class="hero__acoes">
+        <a class="btn btn--claro" href="{{ m.url }}"{% if not loop.first %} tabindex="-1"{% endif %}>Ler matéria</a>
+        <span class="hero__meta">{{ m.data|data_longa }} · {{ m.leitura }} min de leitura</span>
+      </div>
+    </div>
   </article>
-
-  <aside class="prazos-box" aria-labelledby="prazos-titulo">
-    <h2 id="prazos-titulo" class="secao__titulo">Prazos no radar</h2>
-    {% if prazos %}
-    <ol class="prazos-lista">
-      {% for m in prazos %}
-      <li><a href="{{ m.url }}">{{ m.titulo }}</a><span class="meta">{{ m.editoria.nome }} · {{ m.data|data_curta }}</span></li>
-      {% endfor %}
-    </ol>
-    <a class="mais" href="/prazos/">Todos os prazos</a>
-    {% else %}
-    <p class="meta">Nenhum prazo em destaque agora.</p>
-    {% endif %}
-  </aside>
-</section>
-
-{% if ultimas %}
-<section class="envoltorio secao" aria-labelledby="ultimas-titulo">
-  <h2 id="ultimas-titulo" class="secao__titulo">Últimas</h2>
-  <div class="grade">
-    {% for m in ultimas %}{{ card(m) }}{% endfor %}
+  {% endfor %}
+  {% if destaques|length > 1 %}
+  <div class="hero__controles envoltorio">
+    <div class="hero__pontos" role="tablist" aria-label="Escolher destaque">
+      {% for m in destaques %}<button type="button" role="tab" aria-label="Destaque {{ loop.index }}"{% if loop.first %} aria-selected="true"{% endif %}><span></span></button>{% endfor %}
+    </div>
+    <button type="button" class="hero__pausa" aria-label="Pausar destaques">❚❚</button>
   </div>
+  {% endif %}
 </section>
-{% endif %}
 
-{% for e, itens in por_editoria %}
-<section class="envoltorio secao secao--editoria" aria-labelledby="ed-{{ e.slug }}">
-  <div class="secao__cabeca">
-    <h2 id="ed-{{ e.slug }}" class="secao__titulo">{{ e.nome }}</h2>
-    <a class="mais" href="/editoria/{{ e.slug }}/">Ver tudo</a>
-  </div>
-  <div class="grade grade--texto">
-    {% for m in itens %}{{ card(m, com_capa=false) }}{% endfor %}
-  </div>
-</section>
-{% endfor %}
-
-<section class="envoltorio secao">
-  <a class="botao" href="/todas/">Todas as notícias</a>
-</section>
+<div class="fileiras">
+  {% if ultimas %}{{ fileira('Últimas', ultimas, '/todas/', 'ultimas') }}{% endif %}
+  {% if prazos %}{{ fileira('Prazos no radar', prazos, '/prazos/', 'prazos', numerada=true) }}{% endif %}
+  {% for e, itens in por_editoria %}
+  {{ fileira(e.nome, itens, '/editoria/' ~ e.slug ~ '/', e.slug) }}
+  {% endfor %}
+</div>
 {% endif %}
 {% endblock %}

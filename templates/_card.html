@@ -10,12 +10,33 @@
 <p class="rotulo"><a href="/editoria/{{ m.editoria.slug }}/">{{ m.editoria.nome }}</a>{% if m.prazo %}<span class="rotulo__prazo">Prazo</span>{% endif %}</p>
 {% endmacro %}
 
-{% macro card(m, com_capa=true, com_resumo=true) %}
+{# card de vitrine: capa 16:9 com título embaixo #}
+{% macro card(m, com_resumo=false) %}
 <article class="card">
-  {% if com_capa %}<a class="card__capa" href="{{ m.url }}" tabindex="-1" aria-hidden="true">{{ capa(m) }}</a>{% endif %}
-  {{ rotulo(m) }}
-  <h3 class="card__titulo"><a href="{{ m.url }}">{{ m.titulo }}</a></h3>
-  {% if com_resumo %}<p class="card__resumo">{{ m.resumo }}</p>{% endif %}
-  <p class="meta"><time datetime="{{ m.data|iso }}">{{ m.data|data_curta }}</time></p>
+  <a class="card__link" href="{{ m.url }}">
+    <span class="card__capa">{{ capa(m) }}{% if m.prazo %}<span class="selo">Prazo</span>{% endif %}</span>
+    <span class="card__ed">{{ m.editoria.nome }}</span>
+    <h3 class="card__titulo">{{ m.titulo }}</h3>
+    {% if com_resumo %}<p class="card__resumo">{{ m.resumo }}</p>{% endif %}
+    <time class="card__data" datetime="{{ m.data|iso }}">{{ m.data|data_curta }}</time>
+  </a>
 </article>
+{% endmacro %}
+
+{# fileira horizontal estilo streaming #}
+{% macro fileira(titulo, itens, link=None, id='', numerada=false) %}
+<section class="fileira{% if numerada %} fileira--top{% endif %}" aria-labelledby="f-{{ id }}">
+  <div class="fileira__cabeca envoltorio">
+    <h2 id="f-{{ id }}" class="fileira__titulo">{% if link %}<a href="{{ link }}">{{ titulo }} <span aria-hidden="true">›</span></a>{% else %}{{ titulo }}{% endif %}</h2>
+    <div class="fileira__setas" hidden>
+      <button type="button" class="seta" data-dir="-1" aria-label="Voltar">‹</button>
+      <button type="button" class="seta" data-dir="1" aria-label="Avançar">›</button>
+    </div>
+  </div>
+  <div class="fileira__trilho" tabindex="-1">
+    {% for m in itens %}
+    {% if numerada %}<div class="top"><span class="top__n" aria-hidden="true">{{ loop.index }}</span>{{ card(m) }}</div>{% else %}{{ card(m) }}{% endif %}
+    {% endfor %}
+  </div>
+</section>
 {% endmacro %}

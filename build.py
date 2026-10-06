@@ -291,23 +291,24 @@ def main() -> None:
         ctx.setdefault("url_atual", url)
         escrever(url, env.get_template(tpl).render(**ctx))
 
-    # home
+    # home (vitrine estilo streaming)
     manchete = next((m for m in materias if m["manchete"]), materias[0] if materias else None)
-    resto = [m for m in materias if m is not manchete]
+    destaques = ([manchete] + [m for m in materias if m is not manchete][:3]) if manchete else []
+    ultimas = [m for m in materias if m not in destaques][:12] or materias[:12]
+    prazos = [m for m in materias if m["prazo"]][:10]
     por_editoria = []
     for e in cfg["editorias"]:
-        itens = [m for m in resto[6:] if m["editoria"]["slug"] == e["slug"]][:3]
+        itens = [m for m in materias if m["editoria"]["slug"] == e["slug"]][:12]
         if itens:
             por_editoria.append((e, itens))
-    prazos = [m for m in materias if m["prazo"]][:5]
-    render("home.html", "/", manchete=manchete, ultimas=resto[:6], por_editoria=por_editoria,
-           prazos=prazos, mais_lidas=None)
+    render("home.html", "/", destaques=destaques, ultimas=ultimas, por_editoria=por_editoria,
+           prazos=prazos)
 
     # matérias
     for i, m in enumerate(materias):
-        relacionadas = [o for o in materias if o is not m and o["editoria"] is m["editoria"]][:3]
-        if len(relacionadas) < 3:
-            relacionadas += [o for o in materias if o is not m and o not in relacionadas][:3 - len(relacionadas)]
+        relacionadas = [o for o in materias if o is not m and o["editoria"] is m["editoria"]][:8]
+        if len(relacionadas) < 8:
+            relacionadas += [o for o in materias if o is not m and o not in relacionadas][:8 - len(relacionadas)]
         render("materia.html", m["url"], m=m, relacionadas=relacionadas)
 
     # editorias
