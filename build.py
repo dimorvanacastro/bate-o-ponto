@@ -403,7 +403,8 @@ def main() -> None:
     semana = [m for m in materias if fora(m, destaques[:5]) and agora - m["data"] <= dt.timedelta(days=10)][:12]
     if len(semana) < 4:
         semana = [m for m in materias if fora(m, destaques[:5])][:8]
-    ultimas = [m for m in materias if fora(m, destaques[:5])][:15]
+    # o feed mostra tudo em ordem cronológica (inclusive o que está no hero), como nos portais
+    ultimas = materias[:15]
     prazos = [m for m in materias if m["prazo"]][:6]
     render("home.html", "/", destaques=destaques, semana=semana, ultimas=ultimas, prazos=prazos)
 
