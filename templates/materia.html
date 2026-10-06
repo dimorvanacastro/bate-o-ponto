@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% from "_card.html" import card, capa, rotulo, fileira %}
+{% from "_card.html" import card, capa, chapeu %}
 {% block titulo %}{{ m.titulo }} · {{ site.nome }}{% endblock %}
 {% block descricao %}{{ m.resumo }}{% endblock %}
 {% block og %}
@@ -47,27 +47,18 @@
 {% endblock %}
 {% block conteudo %}
 <article class="materia">
-  <header class="materia__topo">
-    <div class="materia__fundo" aria-hidden="true">
-      {% if m.imagem %}<img src="{{ m.imagem }}" alt="">{% else %}<div class="hero__tipo capa--t{{ m.tom }}"><span>{{ m.tema }}</span></div>{% endif %}
-    </div>
-    <div class="envoltorio materia__cabeca">
-      <nav class="trilha" aria-label="Você está em"><a href="/">Início</a> <span aria-hidden="true">›</span> <a href="/editoria/{{ m.editoria.slug }}/">{{ m.editoria.nome }}</a></nav>
-      <p class="hero__rotulo">{{ m.editoria.nome }}{% if m.prazo %} <span class="selo selo--inline">Prazo</span>{% endif %}</p>
-      <h1 class="materia__titulo">{{ m.titulo }}</h1>
-      <p class="materia__resumo">{{ m.resumo }}</p>
-      <p class="materia__meta">
-        Por <a href="/expediente/">{{ site.autor }}</a> ·
-        <time datetime="{{ m.data|iso }}">{{ m.data|data_longa }}, {{ m.data|hora }}</time>
-        {% if m.atualizado %}· <strong>Atualizado em <time datetime="{{ m.atualizado|iso }}">{{ m.atualizado|data_longa }}, {{ m.atualizado|hora }}</time></strong>{% endif %}
-        · {{ m.leitura }} min de leitura
-      </p>
+  <header class="envoltorio materia__cabeca">
+    {{ chapeu(m) }}
+    <h1 class="materia__titulo">{{ m.titulo }}</h1>
+    <p class="materia__resumo">{{ m.resumo }}</p>
+    <div class="materia__meta">
+      <p>Por <a href="/expediente/">{{ site.autor }}</a></p>
+      <p><time datetime="{{ m.data|iso }}">{{ m.data.strftime('%d/%m/%Y') }} {{ m.data|hora }}</time>{% if m.atualizado %} · Atualizado <time datetime="{{ m.atualizado|iso }}">{{ m.atualizado.strftime('%d/%m/%Y') }} {{ m.atualizado|hora }}</time>{% endif %} · {{ m.leitura }} min de leitura</p>
     </div>
   </header>
 
-  <div class="folha">
   {% if m.imagem %}
-  <figure class="materia__foto">
+  <figure class="envoltorio materia__foto">
     <img src="{{ m.imagem }}" alt="" width="1200" height="675">
     {% if m.credito %}<figcaption>Foto: {{ m.credito }}</figcaption>{% endif %}
   </figure>
@@ -81,14 +72,18 @@
       {{ m.corpo|safe }}
       <p class="aviso-legal">{{ site.aviso_legal }}</p>
       {% if m.tags %}
-      <p class="temas">Temas: {% for t in m.tags %}<a href="/tema/{{ t|slugify }}/">{{ t }}</a>{% endfor %}</p>
+      <p class="temas">{% for t in m.tags %}<a href="/tema/{{ t|slugify }}/">{{ t }}</a>{% endfor %}</p>
       {% endif %}
     </div>
-  </div>
   </div>
 </article>
 
 {% if relacionadas %}
-<div class="fileiras fileiras--fim">{{ fileira('Leia também', relacionadas, None, 'rel') }}</div>
+<section class="envoltorio relacionadas" aria-labelledby="rel-titulo">
+  <h2 id="rel-titulo" class="secao__titulo">Leia também</h2>
+  <div class="grade">
+    {% for o in relacionadas %}{{ card(o) }}{% endfor %}
+  </div>
+</section>
 {% endif %}
 {% endblock %}

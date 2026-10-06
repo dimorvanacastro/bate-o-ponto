@@ -1,26 +1,26 @@
 {% extends "base.html" %}
-{% from "_card.html" import card %}
+{% from "_card.html" import feed %}
 {% block titulo %}{{ titulo }}{% if pag.atual > 1 %} · página {{ pag.atual }}{% endif %} · {{ site.nome }}{% endblock %}
 {% block descricao %}{{ titulo }}: notícias de Departamento Pessoal no {{ site.nome }}.{% endblock %}
 {% block conteudo %}
-<section class="envoltorio secao">
-  <header class="lista__cabeca">
-    {% if subtitulo == 'Tema' %}<p class="rotulo">Tema</p>{% endif %}
-    <h1 class="lista__titulo">{{ titulo }}</h1>
-    {% if subtitulo and subtitulo != 'Tema' %}<p class="lista__sub">{{ subtitulo }}</p>{% endif %}
-  </header>
-  {% if itens %}
-  <div class="grade">
-    {% for m in itens %}{{ card(m, com_resumo=true) }}{% endfor %}
+<header class="faixa-titulo">
+  <div class="envoltorio">
+    {% if subtitulo == 'Tema' %}<p class="chapeu">Tema</p>{% endif %}
+    <h1 class="faixa-titulo__h1">{{ titulo }}</h1>
+    {% if subtitulo and subtitulo != 'Tema' %}<p class="faixa-titulo__sub">{{ subtitulo }}</p>{% endif %}
   </div>
+</header>
+<section class="envoltorio lista">
+  {% if itens %}
+    {% for m in itens %}{{ feed(m) }}{% endfor %}
   {% else %}
   <p class="vazio">Ainda não há notícias aqui.</p>
   {% endif %}
   {% if pag.total > 1 %}
   <nav class="paginacao" aria-label="Páginas">
-    {% if pag.anterior %}<a href="{{ pag.anterior }}">← Mais recentes</a>{% else %}<span></span>{% endif %}
+    {% if pag.anterior %}<a href="{{ pag.anterior }}">‹ Mais recentes</a>{% else %}<span></span>{% endif %}
     <span>Página {{ pag.atual }} de {{ pag.total }}</span>
-    {% if pag.proxima %}<a href="{{ pag.proxima }}">Mais antigas →</a>{% else %}<span></span>{% endif %}
+    {% if pag.proxima %}<a href="{{ pag.proxima }}">Mais antigas ›</a>{% else %}<span></span>{% endif %}
   </nav>
   {% endif %}
 </section>
