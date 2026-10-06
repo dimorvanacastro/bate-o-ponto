@@ -9,6 +9,26 @@
       menu.classList.toggle("aberto", !aberto);
     });
   }
+  /* toolbar: dia e hora ao vivo + "Última hora" girando */
+  var relogio = document.getElementById("relogio");
+  if (relogio) {
+    var dias = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+    var meses = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+    var tique = function () {
+      var d = new Date(), h = String(d.getHours()).padStart(2, "0"), mi = String(d.getMinutes()).padStart(2, "0");
+      relogio.textContent = dias[d.getDay()] + ", " + (d.getDate() === 1 ? "1º" : d.getDate()) + " de " + meses[d.getMonth()] + " · " + h + "h" + mi;
+    };
+    tique(); setInterval(tique, 20000);
+  }
+  var noticias = document.querySelectorAll(".toolbar__trilho a");
+  if (noticias.length > 1 && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    var n = 0;
+    setInterval(function () {
+      noticias[n].classList.remove("ativo");
+      n = (n + 1) % noticias.length;
+      noticias[n].classList.add("ativo");
+    }, 5000);
+  }
   /* "Há 3 horas", como nos portais de notícia */
   var agora = Date.now();
   document.querySelectorAll("time[data-rel]").forEach(function (t) {

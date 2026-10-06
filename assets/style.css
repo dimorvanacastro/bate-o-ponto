@@ -278,17 +278,35 @@ button, input { font: inherit; }
   .da-semana .capa--tipo span { font-size: 15px; }
 }
 
-/* assinatura da marca: "por Dimorvana Castro" em Garamond */
+/* assinatura da marca: "POR DIMORVANA CASTRO" em Poppins, caixa alta, ~30% do nome */
 .marca { align-items: baseline; }
 .marca__sinal { align-self: center; }
-.marca__por { font: 400 17px/1 "EB Garamond", "Adobe Garamond Pro", Garamond, Georgia, serif; letter-spacing: .01em; color: rgba(255,255,255,.88); margin-left: 2px; white-space: nowrap; }
+.marca__por { font: 500 10px/1 "Poppins", "Archivo", Arial, sans-serif; letter-spacing: .14em; text-transform: uppercase; color: rgba(255,255,255,.85); margin-left: 4px; white-space: nowrap; }
 .rodape__marca { align-items: baseline; }
 .rodape__marca .marca__sinal { align-self: center; }
-.rodape__marca .marca__por { font-size: 16px; }
+
+/* topo fixo: toolbar + barra + menu */
+.topo { position: sticky; top: 0; z-index: 50; box-shadow: 0 1px 0 var(--linha); }
+.toolbar { background: #06306f; color: #cfe0f8; font-size: 13px; }
+.toolbar__in { display: flex; align-items: center; gap: 24px; height: 34px; }
+.toolbar__data { flex: none; white-space: nowrap; font-weight: 500; }
+.toolbar__data::first-letter { text-transform: uppercase; }
+.toolbar__news { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; justify-content: flex-end; }
+.toolbar__selo { flex: none; font: 700 11px/1 var(--sans); letter-spacing: .08em; text-transform: uppercase; color: #06306f; background: #fff; padding: 4px 7px; border-radius: 3px; }
+.toolbar__trilho { position: relative; flex: 0 1 620px; min-width: 0; height: 20px; overflow: hidden; }
+.toolbar__trilho a { position: absolute; inset: 0; color: #fff; text-decoration: none; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 20px; opacity: 0; transform: translateY(8px); transition: opacity .4s, transform .4s; pointer-events: none; }
+.toolbar__trilho a.ativo { opacity: 1; transform: none; pointer-events: auto; }
+.toolbar__trilho a:hover { text-decoration: underline; }
+
 @media (max-width: 760px) {
   .barra__in { height: 60px; }
-  .marca { display: grid; grid-template-columns: auto auto; column-gap: 8px; row-gap: 1px; align-items: center; }
+  .marca { display: grid; grid-template-columns: auto auto; column-gap: 8px; row-gap: 3px; align-items: center; }
   .marca__sinal { grid-row: 1 / span 2; height: 30px; }
   .marca__nome { font-size: 22px; }
-  .marca__por { grid-column: 2; font-size: 13px; margin: 0; }
+  .marca__por { grid-column: 2; font-size: 8px; margin: 0; }
+  .toolbar__in { height: 30px; gap: 10px; }
+  .toolbar__data { display: none; }
+  .toolbar__news { justify-content: flex-start; }
+  .toolbar__trilho { flex: 1; }
+  .menu.aberto { max-height: calc(100vh - 90px); overflow-y: auto; }
 }

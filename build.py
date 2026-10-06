@@ -172,6 +172,31 @@ def gerar_og(destino: Path, tema: str, titulo: str, nome_site: str, t: int) -> N
     img.save(destino, "PNG", optimize=True)
 
 
+# ---------------------------------------------------------------- imagens remotas
+def baixar_imagem(url: str, destino: Path) -> str | None:
+    """Baixa a imagem (só fontes oficiais/Agência Brasil, escolhidas pela redação), converte para JPEG 1200 px."""
+    import io
+    import urllib.request
+    try:
+        from PIL import Image
+        req = urllib.request.Request(url, headers={
+            "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126 Safari/537.36",
+            "Accept": "image/avif,image/webp,image/*,*/*;q=0.8"})
+        with urllib.request.urlopen(req, timeout=20) as r:
+            dados = r.read(15_000_000)
+        img = Image.open(io.BytesIO(dados)).convert("RGB")
+        if img.width < 600:
+            return None
+        if img.width > 1200:
+            img = img.resize((1200, round(img.height * 1200 / img.width)), Image.LANCZOS)
+        destino.parent.mkdir(parents=True, exist_ok=True)
+        img.save(destino, "JPEG", quality=84, optimize=True, progressive=True)
+        return "/" + destino.relative_to(SAIDA).as_posix()
+    except Exception as erro:  # rede, formato etc.
+        print(f"aviso: falha ao baixar {url}: {erro}")
+        return None
+
+
 # ---------------------------------------------------------------- stories 1080x1920
 def _quebrar(d, texto, fonte, largura):
     linhas, atual = [], ""
@@ -215,6 +240,8 @@ def gerar_story(destino: Path, m: dict, cfg: dict) -> None:
     foto = None
     if m.get("imagem") and str(m["imagem"]).startswith("/"):
         arq = RAIZ / str(m["imagem"]).lstrip("/")
+        if not arq.exists():
+            arq = SAIDA / str(m["imagem"]).lstrip("/")
         if arq.exists():
             try:
                 foto = ImageOps.fit(Image.open(arq).convert("RGB"), (cw, ch))
@@ -366,6 +393,16 @@ def main() -> None:
     for estatico in (RAIZ / "estatico").glob("*") if (RAIZ / "estatico").exists() else []:
         shutil.copy(estatico, SAIDA / estatico.name)
 
+    # imagens remotas (imagem: "https://...") são baixadas na hora do build e servidas pelo próprio site
+    for m in materias:
+        if m["imagem"] and str(m["imagem"]).startswith("http"):
+            local = baixar_imagem(str(m["imagem"]), SAIDA / "imagens" / f"{m['slug']}.jpg")
+            if local:
+                m["imagem"] = local
+            else:
+                print(f"aviso: não foi possível baixar a imagem de {m['arquivo']}; usando capa tipográfica")
+                m["imagem"] = None
+
     # imagem social de cada matéria
     for m in materias:
         if m["imagem"]:
@@ -385,7 +422,7 @@ def main() -> None:
                       autoescape=select_autoescape(["html"]), trim_blocks=True, lstrip_blocks=True)
     env.filters.update(slugify=slugify, data_longa=data_longa, data_curta=data_curta, hora=hora,
                        iso=lambda d: d.isoformat(timespec="seconds"))
-    env.globals.update(site=cfg, agora=agora, paginas_rodape=[p for p in paginas if p["rodape"]],
+    env.globals.update(site=cfg, agora=agora, ultima_hora=materias[:5], paginas_rodape=[p for p in paginas if p["rodape"]],
                        ano=agora.year, exemplos=incluir_exemplos,
                        versao=hashlib.md5(b"".join(f.read_bytes() for f in sorted((RAIZ / "assets").glob("*.*")))).hexdigest()[:8])
 
