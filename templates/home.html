@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "_card.html" import card, capa, rotulo %}
+{% block conteudo %}
+{% if not manchete %}
+<section class="envoltorio vazio">
+  <h1>Em breve</h1>
+  <p>As primeiras notícias do {{ site.nome }} saem nos próximos dias.</p>
+</section>
+{% else %}
+<h1 class="so-leitor">{{ site.nome }}: {{ site.tagline }}</h1>
+<section class="envoltorio destaque" aria-label="Manchete">
+  <article class="manchete">
+    <div class="manchete__texto">
+      {{ rotulo(manchete) }}
+      <h2 class="manchete__titulo"><a href="{{ manchete.url }}">{{ manchete.titulo }}</a></h2>
+      <p class="manchete__resumo">{{ manchete.resumo }}</p>
+      <p class="meta"><time datetime="{{ manchete.data|iso }}">{{ manchete.data|data_longa }}</time> · {{ manchete.leitura }} min de leitura</p>
+    </div>
+    <a class="manchete__capa" href="{{ manchete.url }}" tabindex="-1" aria-hidden="true">{{ capa(manchete, 'capa--grande') }}</a>
+  </article>
+
+  <aside class="prazos-box" aria-labelledby="prazos-titulo">
+    <h2 id="prazos-titulo" class="secao__titulo">Prazos no radar</h2>
+    {% if prazos %}
+    <ol class="prazos-lista">
+      {% for m in prazos %}
+      <li><a href="{{ m.url }}">{{ m.titulo }}</a><span class="meta">{{ m.editoria.nome }} · {{ m.data|data_curta }}</span></li>
+      {% endfor %}
+    </ol>
+    <a class="mais" href="/prazos/">Todos os prazos</a>
+    {% else %}
+    <p class="meta">Nenhum prazo em destaque agora.</p>
+    {% endif %}
+  </aside>
+</section>
+
+{% if ultimas %}
+<section class="envoltorio secao" aria-labelledby="ultimas-titulo">
+  <h2 id="ultimas-titulo" class="secao__titulo">Últimas</h2>
+  <div class="grade">
+    {% for m in ultimas %}{{ card(m) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% for e, itens in por_editoria %}
+<section class="envoltorio secao secao--editoria" aria-labelledby="ed-{{ e.slug }}">
+  <div class="secao__cabeca">
+    <h2 id="ed-{{ e.slug }}" class="secao__titulo">{{ e.nome }}</h2>
+    <a class="mais" href="/editoria/{{ e.slug }}/">Ver tudo</a>
+  </div>
+  <div class="grade grade--texto">
+    {% for m in itens %}{{ card(m, com_capa=false) }}{% endfor %}
+  </div>
+</section>
+{% endfor %}
+
+<section class="envoltorio secao">
+  <a class="botao" href="/todas/">Todas as notícias</a>
+</section>
+{% endif %}
+{% endblock %}

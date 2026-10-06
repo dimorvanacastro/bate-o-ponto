@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block titulo %}Buscar · {{ site.nome }}{% endblock %}
+{% block conteudo %}
+<section class="envoltorio secao">
+  <header class="lista__cabeca">
+    <h1 class="lista__titulo">Buscar</h1>
+  </header>
+  <form class="busca" role="search" action="/busca/" method="get">
+    <label for="q" class="so-leitor">O que você procura?</label>
+    <input id="q" name="q" type="search" placeholder="Ex.: eSocial, 13º salário, férias" autocomplete="off">
+    <button type="submit">Buscar</button>
+  </form>
+  <p id="busca-status" class="meta" aria-live="polite"></p>
+  <div id="busca-resultados" class="lista"></div>
+</section>
+{% endblock %}
+{% block scripts %}
+<script src="/assets/busca.js?v={{ versao }}" defer></script>
+{% endblock %}

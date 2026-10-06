@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block titulo %}{{ p.titulo }} · {{ site.nome }}{% endblock %}
+{% block descricao %}{{ p.resumo or p.titulo }}{% endblock %}
+{% block conteudo %}
+<article class="materia">
+  <header class="envoltorio materia__cabeca">
+    <h1 class="materia__titulo">{{ p.titulo }}</h1>
+    {% if p.resumo %}<p class="materia__resumo">{{ p.resumo }}</p>{% endif %}
+  </header>
+  <div class="envoltorio"><div class="texto">{{ p.corpo|safe }}</div></div>
+</article>
+{% endblock %}

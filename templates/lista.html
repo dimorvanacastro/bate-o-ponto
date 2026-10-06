@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_card.html" import card %}
+{% block titulo %}{{ titulo }}{% if pag.atual > 1 %} · página {{ pag.atual }}{% endif %} · {{ site.nome }}{% endblock %}
+{% block descricao %}{{ titulo }}: notícias de Departamento Pessoal no {{ site.nome }}.{% endblock %}
+{% block conteudo %}
+<section class="envoltorio secao">
+  <header class="lista__cabeca">
+    {% if subtitulo == 'Tema' %}<p class="rotulo">Tema</p>{% endif %}
+    <h1 class="lista__titulo">{{ titulo }}</h1>
+    {% if subtitulo and subtitulo != 'Tema' %}<p class="lista__sub">{{ subtitulo }}</p>{% endif %}
+  </header>
+  {% if itens %}
+  <div class="lista">
+    {% for m in itens %}{{ card(m) }}{% endfor %}
+  </div>
+  {% else %}
+  <p class="vazio">Ainda não há notícias aqui.</p>
+  {% endif %}
+  {% if pag.total > 1 %}
+  <nav class="paginacao" aria-label="Páginas">
+    {% if pag.anterior %}<a href="{{ pag.anterior }}">← Mais recentes</a>{% else %}<span></span>{% endif %}
+    <span>Página {{ pag.atual }} de {{ pag.total }}</span>
+    {% if pag.proxima %}<a href="{{ pag.proxima }}">Mais antigas →</a>{% else %}<span></span>{% endif %}
+  </nav>
+  {% endif %}
+</section>
+{% endblock %}

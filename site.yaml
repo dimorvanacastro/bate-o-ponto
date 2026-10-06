@@ -1,0 +1,35 @@
+# Configuração do portal "Bate o ponto"
+nome: Bate o ponto
+tagline: Notícias de Departamento Pessoal, sem juridiquês
+descricao: >-
+  Legislação trabalhista, eSocial, folha, benefícios, prazos e decisões da
+  Justiça do Trabalho, sempre com a pergunta: o que muda na rotina do DP?
+# Endereço público do site (sem barra no fim). Trocar quando o domínio for comprado.
+url: https://bate-o-ponto.pages.dev
+autor: Redação Bate o ponto
+responsavel: Dimorvana Castro
+responsavel_cargo: gestora de Departamento Pessoal
+email: dimorvanacastro@gmail.com
+idioma: pt-BR
+
+# Editorias (ordem do menu). "slug" vira o endereço /editoria/<slug>/
+editorias:
+  - nome: Legislação
+    slug: legislacao
+  - nome: eSocial e obrigações
+    slug: esocial
+  - nome: Folha e encargos
+    slug: folha
+  - nome: Benefícios e saúde
+    slug: beneficios
+  - nome: Justiça do Trabalho
+    slug: justica
+  - nome: Gestão e tecnologia
+    slug: gestao
+
+# Google Analytics 4 (ex.: G-XXXXXXX). Vazio = desligado.
+analytics_id: ""
+# Google AdSense (ex.: ca-pub-0000000000000000). Vazio = desligado.
+adsense_id: ""
+
+aviso_legal: Conteúdo informativo. Não substitui a orientação de um contador ou advogado trabalhista.

@@ -1,0 +1,21 @@
+{% macro capa(m, tamanho='') %}
+{% if m.imagem %}
+<img class="capa capa--foto {{ tamanho }}" src="{{ m.imagem }}" alt="" loading="lazy" width="1200" height="675">
+{% else %}
+<div class="capa capa--tipo capa--t{{ m.tom }} {{ tamanho }}" aria-hidden="true"><span>{{ m.tema }}</span></div>
+{% endif %}
+{% endmacro %}
+
+{% macro rotulo(m) %}
+<p class="rotulo"><a href="/editoria/{{ m.editoria.slug }}/">{{ m.editoria.nome }}</a>{% if m.prazo %}<span class="rotulo__prazo">Prazo</span>{% endif %}</p>
+{% endmacro %}
+
+{% macro card(m, com_capa=true, com_resumo=true) %}
+<article class="card">
+  {% if com_capa %}<a class="card__capa" href="{{ m.url }}" tabindex="-1" aria-hidden="true">{{ capa(m) }}</a>{% endif %}
+  {{ rotulo(m) }}
+  <h3 class="card__titulo"><a href="{{ m.url }}">{{ m.titulo }}</a></h3>
+  {% if com_resumo %}<p class="card__resumo">{{ m.resumo }}</p>{% endif %}
+  <p class="meta"><time datetime="{{ m.data|iso }}">{{ m.data|data_curta }}</time></p>
+</article>
+{% endmacro %}

@@ -1,0 +1,2 @@
+Instrument Serif, Archivo e JetBrains Mono são distribuídas sob a SIL Open Font License 1.1 (https://openfontlicense.org).
+Arquivos convertidos dos pacotes @fontsource (subconjunto latin).
