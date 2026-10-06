@@ -194,7 +194,7 @@ button, input { font: inherit; }
   .menu__in { justify-content: flex-start; }
 }
 @media (max-width: 760px) {
-  .envoltorio { padding: 0 16px; }
+  .envoltorio { padding-left: 16px; padding-right: 16px; }
   .barra__in { height: 56px; grid-template-columns: auto 1fr auto; }
   .barra__menu { display: inline-flex; }
   .barra__menu-txt { display: none; }
