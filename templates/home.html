@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% from "_card.html" import feed, card, capa, chapeu %}
 {% block conteudo %}
-{% if not manchete %}
+{% if not destaques %}
 <section class="envoltorio vazio">
   <h1>Em breve</h1>
   <p>As primeiras notícias do {{ site.nome }} saem nos próximos dias.</p>
@@ -9,25 +9,50 @@
 {% else %}
 <h1 class="so-leitor">{{ site.nome }}: {{ site.tagline }}</h1>
 
-<section class="envoltorio topo-home" aria-label="Destaques">
-  <article class="manchete">
-    <a class="manchete__capa" href="{{ manchete.url }}" tabindex="-1" aria-hidden="true">{{ capa(manchete, 'capa--grande') }}</a>
-    {{ chapeu(manchete) }}
-    <h2 class="manchete__titulo"><a href="{{ manchete.url }}">{{ manchete.titulo }}</a></h2>
-    <p class="manchete__resumo">{{ manchete.resumo }}</p>
+<section class="hero" aria-roledescription="carrossel" aria-label="Destaques">
+  {% for m in destaques %}
+  <article class="hero__slide{% if loop.first %} ativo{% endif %}" aria-roledescription="slide" aria-label="{{ loop.index }} de {{ destaques|length }}"{% if not loop.first %} aria-hidden="true"{% endif %}>
+    <div class="hero__fundo" aria-hidden="true">
+      {% if m.imagem %}<img src="{{ m.imagem }}" alt="" width="1200" height="675"{% if not loop.first %} loading="lazy"{% endif %}>
+      {% else %}<div class="hero__tipo capa--t{{ m.tom }}"><span>{{ m.tema }}</span></div>{% endif %}
+    </div>
+    <div class="envoltorio hero__conteudo">
+      <p class="hero__chapeu">{{ m.editoria.nome }}{% if m.prazo %} <span class="selo selo--claro">Prazo</span>{% endif %}</p>
+      <h2 class="hero__titulo"><a href="{{ m.url }}"{% if not loop.first %} tabindex="-1"{% endif %}>{{ m.titulo }}</a></h2>
+      <p class="hero__resumo">{{ m.resumo }}</p>
+      <p class="hero__meta">{{ m.data|data_longa }} · {{ m.leitura }} min de leitura</p>
+    </div>
   </article>
-  {% if apoio %}
-  <div class="apoio">
-    {% for m in apoio %}{{ card(m) }}{% endfor %}
+  {% endfor %}
+  {% if destaques|length > 1 %}
+  <div class="envoltorio hero__controles">
+    <div class="hero__pontos" role="tablist" aria-label="Escolher destaque">
+      {% for m in destaques %}<button type="button" role="tab" aria-label="Destaque {{ loop.index }}"{% if loop.first %} aria-selected="true"{% endif %}><span></span></button>{% endfor %}
+    </div>
+    <span class="hero__contador" aria-hidden="true"><b>01</b> / {{ '%02d' % destaques|length }}</span>
+    <div class="hero__botoes">
+      <button type="button" class="hero__btn hero__pausa" aria-label="Pausar destaques">❚❚</button>
+      <button type="button" class="hero__btn" data-dir="-1" aria-label="Destaque anterior">‹</button>
+      <button type="button" class="hero__btn" data-dir="1" aria-label="Próximo destaque">›</button>
+    </div>
   </div>
   {% endif %}
 </section>
+
+{% if semana %}
+<section class="envoltorio da-semana" aria-labelledby="semana-titulo">
+  <h2 id="semana-titulo" class="secao__titulo">Da semana</h2>
+  <div class="grade">
+    {% for m in semana %}{{ card(m) }}{% endfor %}
+  </div>
+</section>
+{% endif %}
 
 <div class="envoltorio colunas">
   <section class="colunas__principal" aria-labelledby="ultimas-titulo">
     <h2 id="ultimas-titulo" class="secao__titulo">Últimas notícias</h2>
     {% for m in ultimas %}{{ feed(m) }}{% endfor %}
-    <a class="botao-mais" href="/todas/">Veja mais</a>
+    <a class="botao-mais" href="/todas/">Todas as notícias</a>
   </section>
 
   <aside class="colunas__lateral">
@@ -35,16 +60,13 @@
       <h2 id="prazos-titulo" class="secao__titulo">Prazos no radar</h2>
       {% if prazos %}
       <ol class="ranking">
-        {% for m in prazos %}
-        <li><a href="{{ m.url }}">{{ m.titulo }}</a></li>
-        {% endfor %}
+        {% for m in prazos %}<li><a href="{{ m.url }}">{{ m.titulo }}</a></li>{% endfor %}
       </ol>
       <a class="link-mais" href="/prazos/">Todos os prazos ›</a>
       {% else %}
       <p class="meta">Nenhum prazo em destaque agora.</p>
       {% endif %}
     </section>
-
     <section class="box-editorias" aria-labelledby="ed-titulo">
       <h2 id="ed-titulo" class="secao__titulo">Editorias</h2>
       <ul>

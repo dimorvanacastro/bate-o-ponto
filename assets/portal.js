@@ -23,3 +23,59 @@
     if (txt) { t.title = t.textContent; t.textContent = txt; }
   });
 })();
+
+/* hero com destaques (estilo Só uma artezinha) */
+(function () {
+  var hero = document.querySelector(".hero");
+  if (!hero) return;
+  var slides = hero.querySelectorAll(".hero__slide");
+  if (slides.length < 2) return;
+  var pontos = hero.querySelectorAll(".hero__pontos button");
+  var contador = hero.querySelector(".hero__contador b");
+  var pausa = hero.querySelector(".hero__pausa");
+  var reduzir = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var atual = 0, timer = null, pausado = reduzir, TEMPO = 7000;
+
+  function mostrar(i) {
+    var s = slides[atual];
+    s.classList.remove("ativo"); s.setAttribute("aria-hidden", "true");
+    s.querySelectorAll("a").forEach(function (a) { a.tabIndex = -1; });
+    pontos[atual].removeAttribute("aria-selected");
+    atual = (i + slides.length) % slides.length;
+    s = slides[atual];
+    s.classList.add("ativo"); s.removeAttribute("aria-hidden");
+    s.querySelectorAll("a").forEach(function (a) { a.removeAttribute("tabindex"); });
+    pontos[atual].setAttribute("aria-selected", "true");
+    if (contador) contador.textContent = String(atual + 1).padStart(2, "0");
+    reiniciar();
+  }
+  function reiniciar() {
+    clearTimeout(timer);
+    hero.classList.remove("rodando");
+    if (pausado) return;
+    void hero.offsetWidth;
+    hero.classList.add("rodando");
+    timer = setTimeout(function () { mostrar(atual + 1); }, TEMPO);
+  }
+  pontos.forEach(function (b, i) { b.addEventListener("click", function () { mostrar(i); }); });
+  hero.querySelectorAll("[data-dir]").forEach(function (b) {
+    b.addEventListener("click", function () { mostrar(atual + Number(b.dataset.dir)); });
+  });
+  function rotuloPausa() {
+    pausa.textContent = pausado ? "▶" : "❚❚";
+    pausa.setAttribute("aria-label", pausado ? "Tocar destaques" : "Pausar destaques");
+  }
+  rotuloPausa();
+  pausa.addEventListener("click", function () { pausado = !pausado; rotuloPausa(); reiniciar(); });
+  hero.addEventListener("mouseenter", function () { if (!pausado) { clearTimeout(timer); hero.classList.add("parado"); } });
+  hero.addEventListener("mouseleave", function () { hero.classList.remove("parado"); reiniciar(); });
+  var x0 = null;
+  hero.addEventListener("touchstart", function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  hero.addEventListener("touchend", function (e) {
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) mostrar(atual + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+  reiniciar();
+})();

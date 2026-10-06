@@ -291,12 +291,15 @@ def main() -> None:
         ctx.setdefault("url_atual", url)
         escrever(url, env.get_template(tpl).render(**ctx))
 
-    # home (estilo portal de notícias)
+    # home: hero inteiro com 5 destaques + "Da semana" + feed de últimas com lateral de prazos
     manchete = next((m for m in materias if m["manchete"]), materias[0] if materias else None)
-    apoio = [m for m in materias if m is not manchete][:2]
-    ultimas = [m for m in materias if m is not manchete and not any(m is a for a in apoio)][:20]
+    destaques = ([manchete] + [m for m in materias if m is not manchete][:4]) if manchete else []
+    def fora(m, *grupos):
+        return not any(m is x for g in grupos for x in g)
+    semana = [m for m in materias if fora(m, destaques) and agora - m["data"] <= dt.timedelta(days=7)][:4]
+    ultimas = [m for m in materias if fora(m, destaques, semana)][:15]
     prazos = [m for m in materias if m["prazo"]][:6]
-    render("home.html", "/", manchete=manchete, apoio=apoio, ultimas=ultimas, prazos=prazos)
+    render("home.html", "/", destaques=destaques, semana=semana, ultimas=ultimas, prazos=prazos)
 
     # matérias
     for i, m in enumerate(materias):
