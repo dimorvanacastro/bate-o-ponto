@@ -310,3 +310,14 @@ button, input { font: inherit; }
   .toolbar__trilho { flex: 1; }
   .menu.aberto { max-height: calc(100vh - 90px); overflow-y: auto; }
 }
+
+/* marca alinhada à esquerda, na mesma linha da data/hora da toolbar */
+.barra__in { grid-template-columns: auto 1fr auto; }
+.marca { grid-column: 1; justify-self: start; }
+.barra__busca { grid-column: 3; }
+.menu__in { justify-content: flex-start; }
+@media (max-width: 760px) {
+  .barra__in { grid-template-columns: auto 1fr auto; column-gap: 14px; }
+  .barra__menu { grid-column: 1; }
+  .marca { grid-column: 2; justify-self: start; }
+}
