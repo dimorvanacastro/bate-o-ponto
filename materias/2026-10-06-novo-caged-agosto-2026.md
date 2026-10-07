@@ -6,6 +6,8 @@ editoria: gestao
 prazo: false
 tags: ["Novo Caged", "Emprego formal", "Admissão"]
 tema: "Novo Caged"
+imagem: "https://www.gov.br/trabalho-e-emprego/pt-br/noticias-e-conteudo/2026/setembro/novo-caged-emprego-formal-gera-165-8-mil-vagas-em-agosto-e-acumula-1-13-milhao-de-postos-no-ano/whatsapp-image-2026-09-29-at-14-37-53.jpeg/@@images/da5079c4-18b2-4432-ae46-2cc27c40378f.jpeg"
+credito: "Tirza Bráz/MTE"
 ---
 O mercado de trabalho formal brasileiro abriu **165.827 vagas com carteira assinada em agosto de 2026**, segundo o Novo Caged (Cadastro Geral de Empregados e Desempregados), divulgado pelo Ministério do Trabalho e Emprego (MTE) em 29 de setembro de 2026. O número é o saldo entre 2.294.563 admissões e 2.128.736 desligamentos no mês, e os dados saem das informações que as próprias empresas enviam ao eSocial.
 

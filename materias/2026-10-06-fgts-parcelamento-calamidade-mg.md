@@ -7,6 +7,8 @@ prazo: true
 tags: ["FGTS Digital", "Parcelamento", "Calamidade pública"]
 tema: "FGTS Digital"
 manchete: true
+imagem: "https://www.gov.br/trabalho-e-emprego/pt-br/servicos/empregador/fgtsdigital/comunicados/parcelamento-especial-do-fgts-adesao-comeca-em-1o-de-setembro-para-empregadores-de-municipios-de-minas-gerais/calamidade-minas.jpeg/@@images/9b1b4f6d-cbf4-4d22-a3f1-f883c0320268.jpeg"
+credito: "Divulgação/MTE"
 ---
 Empregadores com estabelecimentos em Juiz de Fora, Matias Barbosa e Ubá, em Minas Gerais, têm até **14 de outubro de 2026** para aderir, no FGTS Digital, ao parcelamento especial do Fundo de Garantia do Tempo de Serviço (FGTS) das competências de abril a julho de 2026, que tiveram a cobrança suspensa por causa do estado de calamidade pública nesses municípios. A regra está na Portaria MTE nº 777, de 4 de maio de 2026, e no Edital SIT nº 2/2026, da Secretaria de Inspeção do Trabalho do Ministério do Trabalho e Emprego (MTE).
 

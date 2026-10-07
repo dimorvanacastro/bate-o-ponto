@@ -6,6 +6,8 @@ editoria: legislacao
 prazo: true
 tags: ["PGFN", "MEI", "Dívida ativa", "FGTS"]
 tema: "PGFN"
+imagem: "https://www.gov.br/pgfn/pt-br/assuntos/noticias/2026/novos-editais-da-pgfn-para-renegociacao-de-dividas/ativo-27.png/@@images/09c447e0-2cb9-4a32-95e4-7ede4801afcb.png"
+credito: "Divulgação/PGFN"
 ---
 Microempreendedores individuais (MEIs) com dívidas inscritas na dívida ativa da União de até cinco salários mínimos (R$ 8.105,00, segundo a PGFN) podem negociar o débito com **50% de desconto e pagar o restante em até 60 parcelas mensais**, com adesão aberta de **1º de outubro de 2026 até as 19h de 29 de janeiro de 2027**. A regra é da Portaria PGFN/MF nº 2.970, de 29 de setembro de 2026, publicada em edição extra do Diário Oficial da União (DOU) de 1º de outubro, e a modalidade foi batizada pelo governo de "Desenrola MEI Pequeno Valor".
 
